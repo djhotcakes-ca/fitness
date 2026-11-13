@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b1220">
+<link rel="stylesheet" href="app.css">
+<script>try{var t=localStorage.getItem('fit.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);
+var L=t==='light'||(t!=='dark'&&matchMedia('(prefers-color-scheme: light)').matches);
+document.querySelector('meta[name=theme-color]').content=L?'#f2f4f8':'#0b1220';var s=document.querySelector('meta[name=apple-mobile-web-app-status-bar-style]');if(s&&L)s.content='default'}catch(e){}</script>
+<title>Health Setup</title>
+<style>
+  .g main{padding-bottom:40px}
+  .g h2{font-size:17px;margin:4px 0 8px}
+  .g ol{margin:6px 0 0;padding-left:22px}
+  .g ol li{margin:7px 0}
+  .g ul.in{margin:4px 0;padding-left:18px}
+  .g code{font:12.5px ui-monospace,Menlo,monospace;background:var(--card2);padding:1px 5px;border-radius:5px;color:var(--code);overflow-wrap:anywhere}
+  .g .act{font-weight:650;color:var(--kcal)}
+  .g a{color:var(--acc)}
+  .g .k{display:inline-block;min-width:68px}
+</style>
+</head>
+<body class="g">
+<header class="top"><h1>Apple Health setup</h1><a class="iconbtn" href="index.html" aria-label="Back" style="display:grid;place-items:center;text-decoration:none">✕</a></header>
+<main>
+<div class="card">
+  <div>Websites can't reach Apple Health, so the app hands data to two <b>Shortcuts</b> you build once on this iPhone:</div>
+  <ul class="in">
+    <li><b>Fitness to Health</b> logs new weight, BP, food (calories, protein, sodium) and optionally exercise.</li>
+    <li><b>Health to Fitness</b> copies recent weight, BP and sleep so the app can paste them in.</li>
+  </ul>
+  <div class="sm mut" style="margin-top:6px">Names must match exactly. Action names can differ slightly between iOS versions; search the action list for the bold names below. Takes about 20 minutes.</div>
+</div>
+
+<div class="card">
+  <h2>Tips for building</h2>
+  <ul class="in sm">
+    <li>Type keys exactly: lowercase, and no space after them (autocorrect likes to add one).</li>
+    <li>Inside each loop, save <code>v</code> and <code>d</code> with <b>Set Variable</b> (e.g. <code>wval</code>, <code>wdate</code>) and use those names in Log Health Sample; both results are called “Dictionary Value” and are easy to mix up.</li>
+    <li>For the orange <b>Dictionary</b> in a later loop: tap the field → <b>Select Variable</b> → tap the bubble under “Get dictionary from” at the top.</li>
+    <li>Add an action: tap <b>Search Actions</b> at the bottom and type its name.</li>
+    <li>Pick a variable: tap a blue field, then choose from the list above the keyboard (e.g. <i>Repeat Item</i>, <i>Dictionary Value</i>).</li>
+    <li>Pick a property of a variable (like a sample's <i>Start Date</i>): insert the variable, tap it, and choose the property.</li>
+    <li>Build one loop fully, then long-press its <b>Repeat</b> action → <b>Duplicate</b> and edit the copy.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>1 · “Fitness to Health”</h2>
+  <ol>
+    <li>Shortcuts app → <b>+</b> → rename it <code>Fitness to Health</code>.</li>
+    <li><span class="act">Get Dictionary from Input</span>, input = <i>Shortcut Input</i>. If Shortcuts asks what it receives, choose <b>Text</b>.</li>
+    <li><b>Weight loop</b>
+      <ul class="in">
+        <li><span class="act">Get Dictionary Value</span>: get <i>Value</i> for key <code>weight</code> in <i>Dictionary</i>.</li>
+        <li><span class="act">Repeat with Each</span> item in that <i>Dictionary Value</i>. Inside it:</li>
+        <li><span class="act">Get Dictionary Value</span>: key <code>v</code> in <i>Repeat Item</i>.</li>
+        <li><span class="act">Get Dictionary Value</span>: key <code>d</code> in <i>Repeat Item</i>.</li>
+        <li><span class="act">Log Health Sample</span>: type <b>Weight</b>, value = the <code>v</code> value, unit <b>lb</b>, date = the <code>d</code> value.</li>
+      </ul></li>
+    <li><b>Blood pressure loop (skip it if a BP monitor app such as iHealth already writes to Health</b>; it would log every reading twice. Use “Health to Fitness” to bring those readings into the app instead.) Otherwise: same pattern with key <code>bp</code>; inside, get <code>s</code>, <code>dia</code> and <code>d</code>.
+      <span class="act">Log Health Sample</span> type <b>Blood Pressure</b>: systolic = <code>s</code>, diastolic = <code>dia</code>, date = <code>d</code>.
+      <span class="sm mut">If your iOS only offers separate Systolic and Diastolic types, use two Log Health Sample actions.</span></li>
+    <li><b>Food loops</b>, four copies of the weight loop (keys <code>v</code> and <code>d</code> inside):
+      <ul class="in">
+        <li><span class="k">key <code>kcal</code></span> → type <b>Dietary Energy</b>, unit <b>kcal</b></li>
+        <li><span class="k">key <code>protein</code></span> → type <b>Protein</b>, unit <b>g</b></li>
+        <li><span class="k">key <code>carbs</code></span> → type <b>Carbohydrates</b>, unit <b>g</b></li>
+        <li><span class="k">key <code>sodium</code></span> → type <b>Sodium</b>, unit <b>mg</b></li>
+      </ul></li>
+    <li><b>Exercise loop (optional)</b>: key <code>workouts</code>; inside get <code>name</code>, <code>min</code>, <code>kcal</code>, <code>d</code>.
+      <span class="act">Log Workout</span>: type <b>Other</b> (or Walking), start = <code>d</code>, duration = <code>min</code> minutes, energy = <code>kcal</code>.
+      <span class="sm mut">Some iOS versions save the wrong workout duration; check one in the Health app after the first run.</span></li>
+    <li><b>Active Energy loop</b>: key <code>active</code>; inside get <code>v</code> and <code>d</code> (e.g. <code>aval</code>, <code>adate</code>). <span class="act">Log Health Sample</span> type <b>Active Energy</b>, unit <b>kcal</b>. <span class="sm mut">The app only sends activities you did <i>not</i> mark “Already recorded by iPhone/Watch”, so walks your phone tracked aren't counted twice.</span></li>
+    <li>Last action: <span class="act">Show Notification</span> “Sent to Health”.</li>
+  </ol>
+</div>
+
+<div class="card">
+  <h2>2 · “Health to Fitness”</h2>
+  <ol>
+    <li>New shortcut, rename it <code>Health to Fitness</code>.</li>
+    <li><b>Weight</b>: <span class="act">Find Health Samples</span> where type is <b>Weight</b> and start date is in the last <b>14 days</b>.
+      Then <span class="act">Repeat with Each</span> sample; inside add <span class="act">Text</span>:
+      <div style="margin:6px 0"><code>W|‹Start Date›|‹Value›|‹Unit›|‹Source›</code></div>
+      each ‹…› being a property of <i>Repeat Item</i>. Tap the Start Date token → <b>Date Format: ISO 8601</b>, include time <b>on</b>.
+      Then <span class="act">Add to Variable</span>, variable name <code>Lines</code>.</li>
+    <li><b>Systolic</b>: Find Health Samples, type <b>Blood Pressure Systolic</b>, last <b>30 days</b> → Repeat → Text <code>S|‹Start Date›|‹Value›</code> → Add to Variable <code>Lines</code>.</li>
+    <li><b>Diastolic</b>: same with <b>Blood Pressure Diastolic</b> and Text <code>D|‹Start Date›|‹Value›</code>.</li>
+    <li><b>Sleep</b>: Find Health Samples, type <b>Sleep Analysis</b>, last <b>7 days</b> → Repeat → Text
+      <code>Z|‹Start Date›|‹End Date›|‹Value›|‹Source›</code> (both dates ISO 8601 with time) → Add to Variable <code>Lines</code>.</li>
+    <li><b>Active Energy</b>: Find Health Samples, type <b>Active Energy</b>, last <b>7 days</b>, <b>and</b> add the filter <b>Source is not Shortcuts</b>; if it offers <b>Group By</b>, choose <b>Day</b>. → Repeat → Text <code>E|‹Start Date›|‹Value›|‹Unit›</code> (ISO 8601 date) → Add to Variable <code>Lines</code>.
+      <span class="sm mut">This leaves out the calories this app sent, because the app adds your logged exercise (like rowing) on top itself; that way nothing is lost or counted twice. Mark walks your iPhone/Watch tracked as “Already recorded by iPhone/Watch”. Older shortcuts that send <code>A|</code> lines still work, but Health's total then replaces your logged exercise.</span></li>
+    <li>After the last loop: <span class="act">Combine Text</span> <i>Lines</i> with <b>New Lines</b> → <span class="act">Copy to Clipboard</span> →
+      <span class="act">Show Notification</span> “Copied, switch back to Balanced and tap Paste”.</li>
+  </ol>
+</div>
+
+<div class="card">
+  <h2>Using it</h2>
+  <ul class="in">
+    <li><b>⇪ → Send … to Health</b> runs the first shortcut. Swipe back to Balanced afterwards; it asks whether it finished so nothing is sent twice.</li>
+    <li><b>⇪ → Pull … from Health</b> runs the second; come back and tap <b>Paste from Health</b>. Readings the app already has are skipped, including ones it sent.</li>
+    <li>Pulled readings show as <span class="pill local">new</span> like anything else you add here. Export as usual to merge them into the CSVs.</li>
+    <li>The first run of each shortcut asks for Health access; allow it. You can review it later in Settings → Health → Data Access &amp; Devices → Shortcuts.</li>
+    <li>If Paste says it can't read the clipboard, long-press the box that appears and choose Paste.</li>
+  </ul>
+</div>
+<a class="btn sec" href="index.html" style="text-align:center;text-decoration:none">Back to the app</a>
+</main>
+</body>
+</html>

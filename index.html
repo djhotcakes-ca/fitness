@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Balanced">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="app.css">
+<script>try{var t=localStorage.getItem('fit.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);
+var L=t==='light'||(t!=='dark'&&matchMedia('(prefers-color-scheme: light)').matches);
+document.querySelector('meta[name=theme-color]').content=L?'#f2f4f8':'#0b1220';var s=document.querySelector('meta[name=apple-mobile-web-app-status-bar-style]');if(s&&L)s.content='default'}catch(e){}</script>
+<title>Balanced</title>
+</head>
+<body>
+<header class="top">
+  <h1 id="title">Today</h1>
+  <button id="btnData" class="iconbtn" aria-label="Data &amp; export">⇪</button>
+</header>
+<main id="view"></main>
+<button id="fab" aria-label="Quick add">＋</button>
+<nav class="tabs" id="tabs">
+  <button data-tab="today" class="on"><span>◎</span>Today</button>
+  <button data-tab="plan"><span>☰</span>Plan</button>
+  <button data-tab="trends"><span>▤</span>Trends</button>
+  <button data-tab="weight"><span>⚖</span>Weight</button>
+  <button data-tab="sleep"><span>☾</span>Sleep</button>
+  <button data-tab="bp"><span>♥</span>BP</button>
+</nav>
+<div id="sheet" class="sheet hidden" role="dialog" aria-modal="true"></div>
+<div id="lock" class="lock hidden">
+  <form id="lockForm">
+    <img src="icons/icon-192.png" alt="" width="72" height="72">
+    <h2>Balanced</h2>
+    <p>Enter passcode to unlock your data</p>
+    <input id="lockInput" type="password" inputmode="text" autocomplete="current-password" placeholder="Passcode" required>
+    <label class="chk"><input id="lockRemember" type="checkbox" checked> Remember on this device</label>
+    <button type="submit">Unlock</button>
+    <p id="lockErr" class="err"></p>
+  </form>
+</div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
